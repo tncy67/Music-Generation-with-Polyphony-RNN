@@ -1,0 +1,36 @@
+https://github.com/magenta/magenta/blob/main/magenta/models/polyphony_rnn/README.md
+
+# create the dataset 
+
+convert_dir_to_note_sequences \
+  --input_dir=./songs_MIDI \
+  --output_file=./songs_MIDI_polyphonic/notesequences_polyphonic.tfrecord \
+  --recursive
+
+
+
+
+# After creating the dataset, train the Polyphony RNN model 
+
+polyphony_rnn_train \
+  --config=polyphony \
+  --run_dir=./songs_MIDI_polyphonic_checkpoints \
+  --sequence_example_file=./polyphony_rnn_training_data/training_poly_tracks.tfrecord \
+  --hparams="batch_size=8,rnn_layer_sizes=[128,128,128]" \
+  --num_training_steps=20000
+
+
+# generate new polyphonic music using the trained Polyphony RNN model 
+
+polyphony_rnn_generate \
+  --config=polyphony \
+  --run_dir=/path/to/run/directory \
+  --output_dir=/path/to/output/generated_polyphonic_midis \
+  --num_outputs=10 \
+  --num_steps=128 \
+  --primer_pitches="[67,64,60]" \
+  --condition_on_primer=true \
+  --inject_primer_during_generation=false
+
+
+  Replace /path/to/run/directory with the run directory you used during training, and /path/to/output/generated_polyphonic_midis with the desired output directory for the generated MIDI files. Adjust the other flags as needed to control the generation process (e.g., --num_outputs for the number of MIDI files to generate, --num_steps for the length of the generated sequences, and --primer_pitches for the primer melody).

@@ -1,0 +1,4 @@
+{
+  "batch_size": 64,
+  "rnn_layer_sizes": [64, 64]
+}
